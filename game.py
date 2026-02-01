@@ -1,5 +1,5 @@
 from gameparts import Board
-from gameparts.exceptions import FieldIndexError
+from gameparts.exceptions import FieldIndexError, CellOccupiedError
 
 
 def main():
@@ -24,12 +24,18 @@ def main():
                 column = int(input('Введите номер столбца: '))
                 if column < 0 or column >= game.field_size:
                     raise FieldIndexError
+                if game.board[row][column] != ' ':
+                    raise CellOccupiedError
             except FieldIndexError:
                 print(
                     'Значение должно быть неотрицательным и меньше '
                     f'{game.field_size}.'
                 )
                 print('Введите значения для строки и столбца заново.')
+                continue
+            except CellOccupiedError:
+                print('Ячейка занята')
+                print('Введите другие координаты.')
                 continue
             except ValueError:
                 print('Буквы вводить нельзя. Только числа.')
@@ -44,6 +50,13 @@ def main():
         # из переменной current_player.
         game.make_move(row, column, current_player)
         game.display()
+        # После каждого хода надо делать проверку на победу и на ничью.
+        if game.check_win(current_player):
+            print(f'Победили {current_player}!')
+            running = False
+        elif game.is_board_full():
+            print('Ничья!')
+            running = False
         # Тернарный оператор, через который реализована смена игроков.
         # Если current_player равен X, то новым значением будет O,
         # иначе — новым значением будет X.
