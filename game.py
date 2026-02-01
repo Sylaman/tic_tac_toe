@@ -2,6 +2,12 @@ from gameparts import Board
 from gameparts.exceptions import FieldIndexError, CellOccupiedError
 
 
+def save_result(result):
+    file = open('results.txt', 'a')
+    file.write(result + '\n')
+    file.close()
+
+
 def main():
     game = Board()
     # Первыми ходят крестики.
@@ -52,7 +58,9 @@ def main():
         game.display()
         # После каждого хода надо делать проверку на победу и на ничью.
         if game.check_win(current_player):
-            print(f'Победили {current_player}!')
+            result = f'Победили {current_player}.'
+            print(result)
+            save_result(result)
             running = False
         elif game.is_board_full():
             print('Ничья!')
